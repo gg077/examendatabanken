@@ -1,0 +1,67 @@
+oef1
+SELECT *
+FROM employees;
+
+oef2
+SELECT employees.first_name, employees.last_name, salaries.salary
+FROM employees
+LEFT JOIN salaries ON employees.emp_no = salaries.emp_no
+WHERE salaries.salary > 50000;
+
+oef3
+SELECT departments.dept_name, COUNT(*) AS aantal
+FROM employees
+LEFT JOIN dept_emp ON employees.emp_no = dept_emp.emp_no
+LEFT JOIN departments ON dept_emp.dept_no = departments.dept_no
+GROUP BY departments.dept_no
+HAVING COUNT(*)
+ORDER BY departments.dept_name ASC;
+
+oef4
+SELECT employees.first_name, employees.last_name, MAX(salary) AS hoogste_salaris
+FROM employees
+INNER JOIN salaries ON employees.emp_no = salaries.emp_no;
+
+oef5
+SELECT *
+FROM employees
+WHERE employees.last_name LIKE 'D%' && hire_date > '1997-01-01' && employees.gender = 'F';
+
+------------------------------------------------
+oef1
+/*SELECT customer.customer_id, customer.first_name, customer.last_name, Count(payment.amount) AS totale_inkomsten
+FROM customer
+LEFT JOIN payment ON customer.customer_id = payment.customer_id
+GROUP BY customer_id;
+(ik deed eerst dit dan besefte ik dat er een grotere link in zit en kwam ik aan de volgende oplossing helaas kon de die filter op 5 films niet aanbrengen
+*/
+SELECT customer.customer_id, customer.first_name, customer.last_name, Count(payment.amount) AS totale_inkomsten
+FROM film
+LEFT JOIN inventory ON film.film_id = inventory.film_id
+LEFT JOIN rental ON inventory.inventory_id = rental.inventory_id
+LEFT JOIN customer ON rental.customer_id = customer.customer_id
+LEFT JOIN payment ON customer.customer_id = payment.customer_id
+GROUP BY customer_id;
+
+oef2
+SELECT category.name AS categorie_naam, AVG(film.length) AS gemiddelde_filmduur
+FROM film
+LEFT JOIN film_category ON film.film_id = film_category.film_id
+LEFT JOIN category ON film_category.category_id = category.category_id
+GROUP BY category.category_id
+ORDER BY category.name ASC;
+
+Oef Functie
+CREATE FUNCTION count_films_by_category_name(category.name VARCHAR)
+RETURNS VARCHAR
+DETERMINISTIC
+BEGIN
+	DECLARE aantalfilms VARCHAR
+    SELECT COUNT(*) INTO aantalfilms
+	FROM film
+	LEFT JOIN film_category ON film.film_id = film_category.film_id
+	LEFT JOIN category ON film_category.category_id = category.category_id
+	WHERE category.name = 'DRAMA'
+    return aantalfilms
+END
+DELIMITER;
